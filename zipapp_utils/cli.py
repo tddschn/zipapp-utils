@@ -41,7 +41,7 @@ def main():
         shellscript_content = shellscript_bundle_and_run_pyz.format(
             encode_file(args.pyz)
         )
-        output = shellscript_content
+        output = shellscript_content.strip()
         print_or_write_content(args, output)
     else:
         print('No pyz file specified')

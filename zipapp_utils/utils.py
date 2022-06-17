@@ -14,3 +14,6 @@ def encode_file(file_path: Path) -> str:
         The encoded file."""
 
     return b64encode(file_path.read_bytes()).decode()
+
+
+def render()
