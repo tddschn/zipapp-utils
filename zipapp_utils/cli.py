@@ -9,6 +9,7 @@ import argparse
 from pathlib import Path
 from shutil import rmtree
 from .utils import create_main_py, encode_file, render
+from .config import DEFAULT_PYTHON3_SHEBANG_ZIPAPP
 
 # from .templates import shellscript_bundle_and_run_pyz
 
@@ -62,14 +63,16 @@ def get_args():
     subparser_py2pyz.add_argument(
         '--output',
         '-o',
-        default=None,
+        # default=None,
+        default=argparse.SUPPRESS,
         help="The name of the output archive. " "Required if SOURCE is an archive.",
     )
 
     subparser_py2pyz.add_argument(
         '--python',
         '-p',
-        default=None,
+        # default=None,
+        default=DEFAULT_PYTHON3_SHEBANG_ZIPAPP,
         help="The name of the Python interpreter to use " "(default: no shebang line).",
     )
     subparser_py2pyz.add_argument(
@@ -108,7 +111,8 @@ def get_args():
     subparser_create_archive.add_argument(
         '--python',
         '-p',
-        default=None,
+        # default=None,
+        default=DEFAULT_PYTHON3_SHEBANG_ZIPAPP,
         help="The name of the Python interpreter to use " "(default: no shebang line).",
     )
     subparser_create_archive.add_argument(
@@ -166,7 +170,7 @@ def main_create_archive(args: argparse.Namespace):
     # Handle `python -m zipapp archive.pyz --info`.
     import os
     import sys
-    from zipapp import create_archive, get_interpreter, ZipAppError
+    from zipapp import create_archive, get_interpreter
 
     if args.info:
         if not os.path.isfile(args.source):
@@ -193,6 +197,7 @@ def main_create_archive(args: argparse.Namespace):
         )
 
     do_create_archive()
+    print(f'Created {str(args.output)}')
 
     # try:
     #     do_create_archive()
@@ -256,6 +261,9 @@ def main_py2pyz(args: argparse.Namespace):
         # creates __main__.py if it doesn't exist
         create_main_py(args.source, args.main)
 
+    if 'output' not in args:
+        args.output = args.source.with_suffix('.pyz')
+
     from zipapp import create_archive
 
     create_archive(
@@ -265,6 +273,8 @@ def main_py2pyz(args: argparse.Namespace):
         main=args.main,
         compressed=args.compress,
     )
+
+    print(f'Created {str(args.output)}')
 
 
 def main() -> None:
