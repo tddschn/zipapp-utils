@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "zipapp-utils"
+version = "0.1.0"
+description = "zipapp utilities"
+authors = ["Xinyuan Chen <45612704+tddschn@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "zipapp_utils"}]
+license = "MIT"
+homepage = "https://github.com/tddschn/zipapp-utils"
+repository = "https://github.com/tddschn/zipapp-utils"
+classifiers = [
+    "Topic :: Utilities"
+]
+keywords = ["zipapp", "utils"]
+
+[tool.poetry.scripts]
+zipapp-utils = "zipapp_utils.cli:main"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/tddschn/zipapp-utils/issues"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
