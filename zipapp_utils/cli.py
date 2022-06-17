@@ -12,9 +12,14 @@ from .utils import encode_file, render
 # from .templates import shellscript_bundle_and_run_pyz
 
 
-def print_or_write_content(args: argparse.Namespace, output: str):
+def print_or_write_content(
+    args: argparse.Namespace, output: str, make_executable: bool = False
+) -> None:
     if args.out:
         args.out.write_text(output)
+        if make_executable:
+            st = args.out.stat()
+            args.out.chmod(st.st_mode | 0o0100)
     else:
         print(output)
 
@@ -143,13 +148,14 @@ def main_create_shell_script(args: argparse.Namespace):
         data = {'encoded_pyz_file': encode_file(args.pyz)}
         shellscript_content = render(bundle_and_run_pyz_template_path, data)
         output = shellscript_content.strip()
-        print_or_write_content(args, output)
+        print_or_write_content(args, output, True)
     else:
         print('No pyz file specified')
 
 
 def main() -> None:
-    get_args()
+    args = get_args()
+    args.func(args)
 
 
 if __name__ == '__main__':

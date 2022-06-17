@@ -15,6 +15,7 @@ keywords = ["zipapp", "utils"]
 
 [tool.poetry.scripts]
 zipapp-utils = "zipapp_utils.cli:main"
+zau = "zipapp_utils.cli:main"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/tddschn/zipapp-utils/issues"
