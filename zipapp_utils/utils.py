@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from importlib.metadata import entry_points
 from pathlib import Path
 
 
@@ -75,3 +76,39 @@ def render(
     env.globals["get_context"] = lambda: data
 
     return env.get_template(template_path.name).render(data)
+
+
+# --------------------
+# end of copied code
+# --------------------
+
+
+def create_main_py(python_script: Path, entry_point: str | None = None) -> None:
+    """Create a __main__.py file in the same directory."""
+    main_py = python_script.parent / "__main__.py"
+    if entry_point is not None:
+        # Check that main has the right format.
+        # copied from zipapp.py from cpython source
+        from zipapp import ZipAppError, MAIN_TEMPLATE  # type: ignore
+
+        mod, sep, fn = entry_point.partition(':')
+        mod_ok = all(part.isidentifier() for part in mod.split('.'))
+        fn_ok = all(part.isidentifier() for part in fn.split('.'))
+        if not (sep == ':' and mod_ok and fn_ok):
+            raise ZipAppError("Invalid entry point: " + entry_point)
+        main_py_content = MAIN_TEMPLATE.format(module=mod, fn=fn)
+    else:
+        main_py_content = render(
+            Path(__file__).parent / "templates" / "__main__.jinja.py",
+            {'script_name': python_script.stem},
+        )
+    main_py.write_text(main_py_content)
+
+def install_dependencies(python_script: Path) -> None:
+    """Install dependencies using pip."""
+    import subprocess
+    import sys
+
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "-r", str(python_script.parent / "requirements.txt")]
+    )
