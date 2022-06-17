@@ -35,7 +35,7 @@ def force_text(data: str | bytes) -> str:
 def render(
     template_path: Path,
     data: dict[str, str],
-    extensions: list[str],
+    extensions: list[str] = [],
     strict: bool = False,
 ) -> str:
     from jinja2 import (
@@ -51,10 +51,11 @@ def render(
     # in implicitly for older versions.
     # We also don't track any lower bounds on jinja2 as a dependency, so
     # it's not easily safe to know it's included by default either.
-    extensions = [
-        "do",
-        "loopcontrols",
-    ] + extensions  # copied from jinja2-cli's main func
+
+    # extensions = [
+    #     "do",
+    #     "loopcontrols",
+    # ] + extensions  # copied from jinja2-cli's main func
     if tuple(jinja_version.split(".", 2)) < ("3", "1"):
         for ext in "with_", "autoescape":
             ext = "jinja2.ext." + ext

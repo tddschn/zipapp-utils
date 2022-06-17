@@ -7,8 +7,8 @@ Purpose: zipapp utilities
 
 import argparse
 from pathlib import Path
-from .utils import encode_file
-from .templates import shellscript_bundle_and_run_pyz
+from .utils import encode_file, render
+# from .templates import shellscript_bundle_and_run_pyz
 
 
 def print_or_write_content(args: argparse.Namespace, output: str):
@@ -38,9 +38,12 @@ def main():
 
     args = get_args()
     if args.pyz:
-        shellscript_content = shellscript_bundle_and_run_pyz.format(
-            encode_file(args.pyz)
-        )
+        # shellscript_content = shellscript_bundle_and_run_pyz.format(
+        #     encode_file(args.pyz)
+        # )
+        bundle_and_run_pyz_template_path = Path(__file__).parent / "templates" / "bundle_and_run_pyz.jinja.sh"
+        data = {'encoded_pyz_file': encode_file(args.pyz)}
+        shellscript_content = render(bundle_and_run_pyz_template_path, data)
         output = shellscript_content.strip()
         print_or_write_content(args, output)
     else:
