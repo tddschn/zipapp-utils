@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from importlib.metadata import entry_points
+import argparse
 from pathlib import Path
 
 
@@ -104,11 +104,14 @@ def create_main_py(python_script: Path, entry_point: str | None = None) -> None:
         )
     main_py.write_text(main_py_content)
 
-def install_dependencies(python_script: Path) -> None:
-    """Install dependencies using pip."""
-    import subprocess
-    import sys
 
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "-r", str(python_script.parent / "requirements.txt")]
-    )
+def print_or_write_content(
+    args: argparse.Namespace, output: str, make_executable: bool = False
+) -> None:
+    if args.output:
+        args.output.write_text(output)
+        if make_executable:
+            st = args.output.stat()
+            args.output.chmod(st.st_mode | 0o0100)
+    else:
+        print(output)
