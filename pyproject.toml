@@ -21,6 +21,7 @@ zipapp-utils = "zipapp_utils.cli:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+Jinja2 = "^3.1.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.3.0"
