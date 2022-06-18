@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zipapp-utils"
-version = "0.2.4"
+version = "0.2.5"
 description = "zipapp utilities"
 authors = ["Xinyuan Chen <45612704+tddschn@users.noreply.github.com>"]
 readme = "README.md"
