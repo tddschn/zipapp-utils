@@ -57,8 +57,8 @@ def get_args():
     subparser_py2pyz.add_argument(
         '--output',
         '-o',
-        # default=None,
-        default=argparse.SUPPRESS,
+        default=None,
+        # default=argparse.SUPPRESS,
         help="The name of the output archive. " "Required if SOURCE is an archive.",
     )
 
@@ -130,8 +130,10 @@ def get_args():
         help="Display the interpreter from the archive.",
     )
     subparser_create_archive.add_argument(
-        'source', help="Source directory (or existing archive)."
+        'source', help="Source directory (or existing archive).", type=Path
     )
+
+    subparser_create_archive.set_defaults(func=main_create_archive)
 
     # --------------------
     # subparser_create_shell_script

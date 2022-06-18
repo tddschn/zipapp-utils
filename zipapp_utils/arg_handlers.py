@@ -12,6 +12,8 @@ def main_create_archive(args: argparse.Namespace):
     import sys
     from zipapp import create_archive, get_interpreter
 
+    args.source = args.source.resolve()
+
     if args.info:
         if not os.path.isfile(args.source):
             raise SystemExit("Can only get info for an archive file")
@@ -66,6 +68,7 @@ def main_create_shell_script(args: argparse.Namespace):
 
 
 def main_py2pyz(args: argparse.Namespace):
+    args.source = args.source.resolve()
     source_parent_dir = str(args.source.parent)
     if 'requirement' in args:
         if args.requirement is None:
@@ -93,17 +96,22 @@ def main_py2pyz(args: argparse.Namespace):
         # creates __main__.py if it doesn't exist
         create_main_py(args.source, args.main)
 
-    if 'output' not in args:
-        args.output = args.source.with_suffix('.pyz')
+    # if 'output' not in args:
+    #     args.output = args.source.with_suffix('.pyz')
+    # if you do this, you'll add the pyz file in that dir and increase the dir size, and might cause issues if you zip that dir
 
     from zipapp import create_archive
 
+    output = args.output
+    if output is None:
+        output = args.source.with_suffix('.pyz')
+
     create_archive(
         source_parent_dir,
-        args.output,
+        output,
         interpreter=args.python,
         main=args.main,
         compressed=args.compress,
     )
 
-    print(f'Created {str(args.output)}')
+    print(f'Created {str(output)}')
