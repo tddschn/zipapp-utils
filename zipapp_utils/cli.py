@@ -7,6 +7,7 @@ Purpose: zipapp utilities
 
 import argparse
 from pathlib import Path
+from . import __version__, __description__, __app_name__
 from .config import DEFAULT_PYTHON3_SHEBANG_ZIPAPP
 from .arg_handlers import main_py2pyz, main_create_shell_script, main_create_archive
 
@@ -15,8 +16,16 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description='zipapp utilities',
+        prog=__app_name__,
+        description=__description__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+
+    parser.add_argument(
+        '-V',
+        '--version',
+        action='version',
+        version=f'%(prog)s {__version__}',
     )
 
     subparsers = parser.add_subparsers()
@@ -82,8 +91,8 @@ def get_args():
     subparser_create_archive = subparsers.add_parser(
         'create-archive',
         aliases=['ca', 'zipapp'],
-        help='create a zipapp archive',
-        description='create a zipapp archive',
+        help='Create a zipapp archive',
+        description='Create a zipapp archive',
     )
 
     # copied from zipapp.py from cpython source
@@ -131,8 +140,8 @@ def get_args():
     subparser_create_shell_script = subparsers.add_parser(
         'create-shell-script',
         aliases=['sh'],
-        help='create an ASCII shellscript that runs a zipapp archive',
-        description='create an ASCII shellscript that runs a zipapp archive',
+        help='Create an ASCII shellscript that runs a zipapp archive',
+        description='Create an ASCII shellscript that runs a zipapp archive',
     )
 
     subparser_create_shell_script.add_argument(
