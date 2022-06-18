@@ -100,6 +100,7 @@ def get_args():
         '--output',
         '-o',
         default=None,
+        type=Path,
         help="The name of the output archive. " "Required if SOURCE is an archive.",
     )
     subparser_create_archive.add_argument(
@@ -155,7 +156,7 @@ def get_args():
     subparser_create_shell_script.add_argument(
         '-o',
         '--output',
-        help='Path to the output file, or stdout if not set',
+        help='Path to the output file',
         type=Path,
     )
 

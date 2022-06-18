@@ -106,12 +106,12 @@ def create_main_py(python_script: Path, entry_point: str | None = None) -> None:
 
 
 def print_or_write_content(
-    args: argparse.Namespace, output: str, make_executable: bool = False
+    output_content: str, output: Path | None = None, make_executable: bool = False
 ) -> None:
-    if args.output:
-        args.output.write_text(output)
+    if output:
+        output.write_text(output_content)
         if make_executable:
-            st = args.output.stat()
-            args.output.chmod(st.st_mode | 0o0100)
+            st = output.stat()
+            output.chmod(st.st_mode | 0o0100)
     else:
         print(output)
