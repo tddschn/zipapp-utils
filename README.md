@@ -102,7 +102,7 @@ options:
 
 ### zipapp-utils create-archive
 
-Create a zipapp archive
+Create a zipapp archive (.pyz file)
 
 ```
 $ zau ca --help
@@ -166,6 +166,9 @@ zau sh test.pyz -o test.sh
 
 # run test.sh to verify it works
 ./test.sh
+
+# if it works, just copy the content of test.sh and paste it into a jenkins textbox that runs the script.
+# make sure python3 >= 3.5 is installed on the jenkins executor node.
 ```
 
 
