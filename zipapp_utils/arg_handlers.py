@@ -1,6 +1,6 @@
 import argparse
 
-from .api import py2pyz, create_archive, create_shell_script
+from .api import py2pyz, create_archive, create_shell_script, poetry2pyz, pip2pyz
 
 
 def main_py2pyz(args: argparse.Namespace):
@@ -25,4 +25,14 @@ def main_create_archive(args: argparse.Namespace):
 
 def main_create_shell_script(args: argparse.Namespace):
     output = create_shell_script(**vars(args))
+    print(f'Created {str(output)}')
+
+
+def main_poetry2pyz(args: argparse.Namespace):
+    output = poetry2pyz(**vars(args))
+    print(f'Created {str(output)}')
+
+
+def main_pip2pyz(args: argparse.Namespace):
+    output = pip2pyz(**vars(args))
     print(f'Created {str(output)}')

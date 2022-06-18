@@ -125,3 +125,11 @@ def create_shell_script(
         output = pyz.with_suffix('.sh')
     print_or_write_content(output_content, output, True)
     return output
+
+
+def poetry2pyz():
+    pass
+
+
+def pip2pyz():
+    pass
