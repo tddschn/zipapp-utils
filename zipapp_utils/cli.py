@@ -161,12 +161,15 @@ def get_args():
 
     subparser_create_shell_script.set_defaults(func=main_create_shell_script)
 
-    return parser.parse_args()
+    return parser, parser.parse_args()
 
 
 def main() -> None:
-    args = get_args()
-    args.func(args)
+    parser, args = get_args()
+    if hasattr(args, 'func'):
+        args.func(args)
+    else:
+        parser.print_help()
 
 
 if __name__ == '__main__':
