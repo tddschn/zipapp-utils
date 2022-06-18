@@ -13,6 +13,7 @@ def py2pyz(
     python: str | None = None,
     main: str | None = None,
     compress: bool = False,
+    **kwargs,
 ) -> Path:
     source = source.resolve()
     source_parent_dir = str(source.parent)
@@ -62,6 +63,7 @@ def create_archive(
     python: str | None = None,
     main: str | None = None,
     compress: bool = False,
+    **kwargs,
 ) -> Path:
 
     # copied from zipapp.py from cpython source
@@ -107,7 +109,11 @@ def create_archive(
     #     raise e
 
 
-def create_shell_script(pyz: Path, output: Path | None = None) -> Path:
+def create_shell_script(
+    pyz: Path,
+    output: Path | None = None,
+    **kwargs,
+) -> Path:
     pyz = pyz.resolve()
     bundle_and_run_pyz_template_path = (
         Path(__file__).parent / "templates" / "bundle_and_run_pyz.jinja.sh"
