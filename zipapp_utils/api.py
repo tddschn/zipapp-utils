@@ -4,59 +4,6 @@ from pathlib import Path
 from .utils import create_main_py, encode_file, render, print_or_write_content
 
 
-def py2pyz(
-    source: Path,
-    dep: list[str] = [],
-    use_requirements_txt: bool = False,
-    requirement: Path | None = None,
-    output: Path | None = None,
-    python: str | None = None,
-    main: str | None = None,
-    compress: bool = False,
-    **kwargs,
-) -> Path:
-    source = source.resolve()
-    source_parent_dir = str(source.parent)
-    if use_requirements_txt:
-        if requirement is None:
-            requirement = source.with_name('requirements.txt')
-        if not requirement.exists():
-            raise SystemExit(f'Requirements file {str(requirement)} does not exist')
-        from pip._internal.utils.entrypoints import _wrapper
-
-        _wrapper(['install', '-r', str(requirement), '--target', source_parent_dir])
-    if dep:
-        from pip._internal.utils.entrypoints import _wrapper
-
-        _wrapper(['install', '-U'] + dep + ['--target', source_parent_dir])
-
-    for dist_info_dir in Path(source_parent_dir).glob('*.dist-info'):
-        # rm -rf *.dist-info
-        from shutil import rmtree
-
-        rmtree(dist_info_dir)
-
-    has_main = (source / '__main__.py').is_file()
-    if not has_main:
-        # creates __main__.py if it doesn't exist
-        create_main_py(source, main)
-
-    # if 'output' not in args:
-    #     output = source.with_suffix('.pyz')
-    # if you do this, you'll add the pyz file in that dir and increase the dir size, and might cause issues if you zip that dir
-
-    from zipapp import create_archive
-
-    create_archive(
-        source_parent_dir,
-        output,
-        interpreter=python,
-        main=main,
-        compressed=compress,
-    )
-    return source.with_suffix('.pyz') if output is None else output
-
-
 def create_archive(
     source: Path,
     output: Path | None = None,
@@ -127,9 +74,79 @@ def create_shell_script(
     return output
 
 
-def poetry2pyz():
-    pass
+def py2pyz(
+    source: Path,
+    dep: list[str] = [],
+    use_requirements_txt: bool = False,
+    requirement: Path | None = None,
+    output: Path | None = None,
+    python: str | None = None,
+    main: str | None = None,
+    compress: bool = False,
+    **kwargs,
+) -> Path:
+    source = source.resolve()
+    source_parent_dir = str(source.parent)
+    if use_requirements_txt:
+        if requirement is None:
+            requirement = source.with_name('requirements.txt')
+        if not requirement.exists():
+            raise SystemExit(f'Requirements file {str(requirement)} does not exist')
+        from pip._internal.utils.entrypoints import _wrapper
+
+        _wrapper(['install', '-r', str(requirement), '--target', source_parent_dir])
+    if dep:
+        from pip._internal.utils.entrypoints import _wrapper
+
+        _wrapper(['install', '-U'] + dep + ['--target', source_parent_dir])
+
+    for dist_info_dir in Path(source_parent_dir).glob('*.dist-info'):
+        # rm -rf *.dist-info
+        from shutil import rmtree
+
+        rmtree(dist_info_dir)
+
+    has_main = (source / '__main__.py').is_file()
+    if not has_main:
+        # creates __main__.py if it doesn't exist
+        create_main_py(source, main)
+
+    # if 'output' not in args:
+    #     output = source.with_suffix('.pyz')
+    # if you do this, you'll add the pyz file in that dir and increase the dir size, and might cause issues if you zip that dir
+
+    from zipapp import create_archive
+
+    create_archive(
+        source_parent_dir,
+        output,
+        interpreter=python,
+        main=main,
+        compressed=compress,
+    )
+    return source.with_suffix('.pyz') if output is None else output
 
 
-def pip2pyz():
-    pass
+def poetry2pyz(
+    poetry_project: Path, output: Path | None = None, bin: str | None = None, **kwargs
+) -> Path:
+    poetry_project = poetry_project.resolve()
+    return poetry_project.with_suffix('.pyz') if output is None else output
+
+
+def pip2pyz(
+    pip_package: str, output: Path | None = None, bin: str | None = None, **kwargs
+) -> Path:
+    from pip._internal.utils.entrypoints import _wrapper
+
+    # make a secure temp dir
+    from tempfile import TemporaryDirectory
+
+    tempdir = TemporaryDirectory()
+    tempdir_path = Path(tempdir.name)
+    _wrapper(['install', pip_package, '--target', str(tempdir_path)])
+    return (
+        Path(f'./{pip_package}').resolve().with_suffix('.pyz')
+        if output is None
+        else output
+    )
