@@ -1,4 +1,4 @@
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 __description__ = 'zipapp utilities'
 __app_name__ = 'zipapp-utils'
 
