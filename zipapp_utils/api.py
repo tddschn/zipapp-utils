@@ -38,6 +38,7 @@ def create_archive_zau(
             output,
             interpreter=python,
             main=main,
+            filter=kwargs['filter'] if 'filter' in kwargs else None,
             compressed=compress,
         )
 
@@ -150,6 +151,7 @@ def py2pyz(
         target=output,
         interpreter=python,
         main=main,
+        filter=kwargs['filter'] if 'filter' in kwargs else None,
         compressed=compress,
     )
     return source.with_suffix('.pyz') if output is None else output
