@@ -103,6 +103,7 @@ def create_subparser_py2pyz(
         '--output',
         '-o',
         default=None,
+        type=Path,
         # default=argparse.SUPPRESS,
         help="The name of the output archive. " "Required if SOURCE is an archive.",
     )
