@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import argparse
 from pathlib import Path
+from logging import Logger
+from typing import Callable
 
 
 def encode_file(file_path: Path) -> str:
@@ -83,7 +84,7 @@ def render(
 # --------------------
 
 
-def create_main_py(python_script: Path, entry_point: str | None = None) -> None:
+def create_main_py(python_script: Path, entry_point: str | None = None) -> Path:
     """Create a __main__.py file in the same directory."""
     main_py = python_script.parent / "__main__.py"
     if entry_point is not None:
@@ -103,6 +104,7 @@ def create_main_py(python_script: Path, entry_point: str | None = None) -> None:
             {'script_name': python_script.stem},
         )
     main_py.write_text(main_py_content)
+    return main_py
 
 
 def print_or_write_content(
@@ -115,3 +117,29 @@ def print_or_write_content(
             output.chmod(st.st_mode | 0o0100)
     else:
         print(output)
+
+
+def create_archive_with_logging(
+    logger: Logger,
+    source,
+    target=None,
+    interpreter: str | None = None,
+    main=None,
+    filter: Callable[[Path], bool] | None = None,
+    compressed: bool = False,
+):
+    """zipapp.create_archive with logging"""
+    from zipapp import create_archive
+
+    logger.info(
+        f'Running create_archive with args: {source=}, {target=}, {interpreter=}, {main=}, {filter=}, {compressed=}'
+    )
+    create_archive(
+        source=source,
+        target=target,
+        interpreter=interpreter,
+        main=main,
+        filter=filter,
+        compressed=compressed,
+    )
+    logger.info(f'create_archive finished')

@@ -1,11 +1,6 @@
 import argparse
 
-from .api import py2pyz, create_archive, create_shell_script, poetry2pyz, pip2pyz
-
-
-def main_py2pyz(args: argparse.Namespace):
-    output = py2pyz(**vars(args))
-    print(f'Created {str(output)}')
+from .api import py2pyz, create_archive_zau, create_shell_script, poetry2pyz, pip2pyz
 
 
 def main_create_archive(args: argparse.Namespace):
@@ -19,7 +14,14 @@ def main_create_archive(args: argparse.Namespace):
         print("Interpreter: {}".format(interpreter or "<none>"))
         sys.exit(0)
 
-    output = create_archive(**vars(args))
+    output = create_archive_zau(**vars(args))
+    print(f'Created {str(output)}')
+
+
+def main_py2pyz(args: argparse.Namespace):
+    if hasattr(args, 'requirement'):
+        args.use_requirements_txt = True
+    output = py2pyz(**vars(args))
     print(f'Created {str(output)}')
 
 

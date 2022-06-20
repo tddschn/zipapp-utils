@@ -40,7 +40,8 @@ def create_subparser_create_archive(
         '-p',
         # default=None,
         default=DEFAULT_PYTHON3_SHEBANG_ZIPAPP,
-        help="The name of the Python interpreter to use " "(default: no shebang line).",
+        help="The name of the Python interpreter to use "
+        f"(default: {DEFAULT_PYTHON3_SHEBANG_ZIPAPP!r}).",
     )
     subparser_create_archive.add_argument(
         '--main',

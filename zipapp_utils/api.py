@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-from .utils import create_main_py, encode_file, render, print_or_write_content
+from .utils import (
+    create_main_py,
+    encode_file,
+    render,
+    print_or_write_content,
+    create_archive_with_logging,
+)
+from . import EntryPointNotFoundError, ProjectNameNotFoundError, logger
 
 
-def create_archive(
+def create_archive_zau(
     source: Path,
     output: Path | None = None,
     python: str | None = None,
@@ -17,19 +24,16 @@ def create_archive(
     # Handle `python -m zipapp archive.pyz --info`.
     source = source.resolve()
     output = output.resolve() if output is not None else source.with_suffix('.pyz')
-    import os
-    from zipapp import create_archive
 
-    if os.path.isfile(source):
-        if output is None or (
-            os.path.exists(output) and os.path.samefile(source, output)
-        ):
+    if source.is_file():
+        if output is None or (output.exists() and source.samefile(output)):
             raise SystemExit("In-place editing of archives is not supported")
         if main:
             raise SystemExit("Cannot change the main function when copying")
 
     def do_create_archive():
-        create_archive(
+        create_archive_with_logging(
+            logger,
             source,
             output,
             interpreter=python,
@@ -85,8 +89,25 @@ def py2pyz(
     compress: bool = False,
     **kwargs,
 ) -> Path:
+    logger.info(f'Creating pyz from {source}')
+    logger.info(f'args:')
+    logger.info(f'source: {source}')
+    logger.info(f'dep: {dep}')
+    logger.info(f'use_requirements_txt: {use_requirements_txt}')
+    logger.info(f'requirement: {requirement}')
+    logger.info(f'output: {output}')
+    logger.info(f'python: {python}')
+    logger.info(f'main: {main}')
+    logger.info(f'compress: {compress}')
+    logger.info(f'kwargs: {kwargs}')
     source = source.resolve()
-    source_parent_dir = str(source.parent)
+    source_parent_dir = source.parent
+    source_parent_dir_s = str(source_parent_dir)
+    output = (
+        output.resolve()
+        if output is not None
+        else source_parent_dir.with_suffix('.pyz')
+    )
     if use_requirements_txt:
         if requirement is None:
             requirement = source.with_name('requirements.txt')
@@ -94,32 +115,39 @@ def py2pyz(
             raise SystemExit(f'Requirements file {str(requirement)} does not exist')
         from pip._internal.utils.entrypoints import _wrapper
 
-        _wrapper(['install', '-r', str(requirement), '--target', source_parent_dir])
+        pip_args = ['install', '-r', str(requirement), '--target', source_parent_dir_s]
+        logger.info(f'Using requirements file {str(requirement)}')
+        logger.info(f'Running pip with args: {pip_args}')
+        _wrapper(pip_args)
     if dep:
         from pip._internal.utils.entrypoints import _wrapper
 
-        _wrapper(['install', '-U'] + dep + ['--target', source_parent_dir])
+        pip_args = ['install', '-U'] + dep + ['--target', source_parent_dir_s]
+        logger.info(f'Running pip with args: {pip_args}')
+        _wrapper(pip_args)
 
-    for dist_info_dir in Path(source_parent_dir).glob('*.dist-info'):
-        # rm -rf *.dist-info
-        from shutil import rmtree
+    # for dist_info_dir in Path(source_parent_dir_s).glob('*.dist-info'):
+    #     # rm -rf *.dist-info
+    #     from shutil import rmtree
 
-        rmtree(dist_info_dir)
+    #     rmtree(dist_info_dir)
 
-    has_main = (source / '__main__.py').is_file()
+    has_main = (source_parent_dir / '__main__.py').is_file()
     if not has_main:
         # creates __main__.py if it doesn't exist
-        create_main_py(source, main)
+        main_py = create_main_py(source, main)
+        logger.info(f'Created {str(main_py)}')
 
     # if 'output' not in args:
     #     output = source.with_suffix('.pyz')
     # if you do this, you'll add the pyz file in that dir and increase the dir size, and might cause issues if you zip that dir
 
-    from zipapp import create_archive
+    # from zipapp import create_archive
 
-    create_archive(
-        source_parent_dir,
-        output,
+    create_archive_with_logging(
+        logger,
+        source_parent_dir_s,
+        target=output,
         interpreter=python,
         main=main,
         compressed=compress,
@@ -131,6 +159,30 @@ def poetry2pyz(
     poetry_project: Path, output: Path | None = None, bin: str | None = None, **kwargs
 ) -> Path:
     poetry_project = poetry_project.resolve()
+    pyproject_toml_path = poetry_project / 'pyproject.toml'
+    from poetry.core.pyproject.toml import PyProjectTOML
+
+    ppt = PyProjectTOML(pyproject_toml_path)
+    try:
+        all_entry_point_commands = set(ppt.poetry_config['scripts'])  # type: ignore
+    except:
+        raise EntryPointNotFoundError(
+            f'No entry point found in {str(pyproject_toml_path)}'
+        )
+    if bin is None:
+        try:
+            project_name = ppt.poetry_config['name']  # type: ignore
+            assert project_name != ''
+        except:
+            raise ProjectNameNotFoundError(
+                f'No project name found in {str(pyproject_toml_path)}. It\'s used as the default entry point if --bin is not specified.'
+            )
+        bin = project_name
+    if bin not in all_entry_point_commands:
+        raise EntryPointNotFoundError(
+            f'No entry point found in {str(pyproject_toml_path)} for {bin}'
+        )
+
     return poetry_project.with_suffix('.pyz') if output is None else output
 
 

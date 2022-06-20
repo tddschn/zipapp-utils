@@ -42,7 +42,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 name = "jinja2"
 version = "3.1.2"
 description = "A very fast and expressive template engine."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -53,10 +53,21 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "logging-utils-tddschn"
+version = "0.1.10"
+description = "Logging utilities for personal use."
+category = "dev"
+optional = false
+python-versions = ">=3.10,<4.0"
+
+[package.dependencies]
+utils-tddschn = ">=1.0.1,<2.0.0"
+
+[[package]]
 name = "markupsafe"
 version = "2.1.1"
 description = "Safely add untrusted strings to HTML/XML markup."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 
@@ -104,10 +115,18 @@ category = "dev"
 optional = false
 python-versions = ">=3.7"
 
+[[package]]
+name = "utils-tddschn"
+version = "1.0.1"
+description = ""
+category = "dev"
+optional = false
+python-versions = ">=3.10,<4.0"
+
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d4eaec006b9069a5479e2b19c31970ac8cdb3a6b23ae9c22a9e4119809675a94"
+content-hash = "b9b882fd6e662485732133861a0b9f1152df462afa047eb853cf6f5691c6fb4e"
 
 [metadata.files]
 black = [
@@ -146,6 +165,10 @@ colorama = [
 jinja2 = [
     {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
     {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
+]
+logging-utils-tddschn = [
+    {file = "logging-utils-tddschn-0.1.10.tar.gz", hash = "sha256:1195d1b33280b4ad9fd46935e80bd832943231ed427dfed464a3f8131261a136"},
+    {file = "logging_utils_tddschn-0.1.10-py3-none-any.whl", hash = "sha256:bd0721f9c98ce71d41511f00f9fd77b0ad410090e3d50bc052db5f0f3ecd0598"},
 ]
 markupsafe = [
     {file = "MarkupSafe-2.1.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:86b1f75c4e7c2ac2ccdaec2b9022845dbb81880ca318bb7a0a01fbf7813e3812"},
@@ -208,4 +231,8 @@ poetry-core = [
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
+]
+utils-tddschn = [
+    {file = "utils-tddschn-1.0.1.tar.gz", hash = "sha256:18f780430bafbb853f28df7b24c93cff1d1d456aefbbefd7923b1e6b74998a06"},
+    {file = "utils_tddschn-1.0.1-py3-none-any.whl", hash = "sha256:5c53b37bc6b6e1cde6c8f099f242c7e6f31338ff338bc03ce78b57907bde4aaf"},
 ]
