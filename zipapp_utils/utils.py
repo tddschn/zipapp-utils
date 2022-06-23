@@ -143,3 +143,4 @@ def create_archive_with_logging(
         compressed=compressed,
     )
     logger.info(f'create_archive finished')
+

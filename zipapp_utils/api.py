@@ -145,16 +145,25 @@ def py2pyz(
 
     # from zipapp import create_archive
 
-    create_archive_with_logging(
-        logger,
-        source_parent_dir_s,
+    # create_archive_with_logging(
+    #     logger,
+    #     source_parent_dir_s,
+    #     target=output,
+    #     interpreter=python,
+    #     main=main,
+    #     filter=kwargs['filter'] if 'filter' in kwargs else None,
+    #     compressed=compress,
+    # )
+    # return source.with_suffix('.pyz') if output is None else output
+
+    create_archive_zau(
+        source_parent_dir,
         target=output,
         interpreter=python,
         main=main,
         filter=kwargs['filter'] if 'filter' in kwargs else None,
         compressed=compress,
     )
-    return source.with_suffix('.pyz') if output is None else output
 
 
 def poetry2pyz(

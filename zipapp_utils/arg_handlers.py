@@ -1,7 +1,9 @@
 import argparse
 
 from .api import py2pyz, create_archive_zau, create_shell_script, poetry2pyz, pip2pyz
-from .config import DEFAULT_ZIPAPP_FILTER
+
+# from .config import DEFAULT_ZIPAPP_FILTER, FILTER_ARGS
+from .filters import make_filter_function_from_args
 
 
 def main_create_archive(args: argparse.Namespace):
@@ -15,7 +17,9 @@ def main_create_archive(args: argparse.Namespace):
         print("Interpreter: {}".format(interpreter or "<none>"))
         sys.exit(0)
 
-    output = create_archive_zau(**vars(args), filter=DEFAULT_ZIPAPP_FILTER)
+    output = create_archive_zau(
+        **vars(args), filter=make_filter_function_from_args(args.source, **vars(args))
+    )
     print(f'Created {str(output)}')
 
 

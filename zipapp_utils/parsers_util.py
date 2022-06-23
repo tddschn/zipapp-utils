@@ -63,10 +63,55 @@ def create_subparser_create_archive(
         action='store_true',
         help="Display the interpreter from the archive.",
     )
+
     subparser_create_archive.add_argument(
         'source', help="Source directory (or existing archive).", type=Path
     )
 
+    subparser_create_archive.add_argument(
+        '--include',
+        help="don't exclude files matching PATTERN",
+        action='append',
+        default=[],
+        metavar='PATTERN',
+    )
+
+    subparser_create_archive.add_argument(
+        '--include-from',
+        help='read include patterns from FILE',
+        action='append',
+        default=[],
+        metavar='FILE',
+        type=Path,
+    )
+
+    subparser_create_archive.add_argument(
+        '--exclude',
+        help="exclude files matching PATTERN",
+        action='append',
+        default=[],
+        metavar='PATTERN',
+    )
+
+    subparser_create_archive.add_argument(
+        '--exclude-from',
+        help='read exclude patterns from FILE',
+        action='append',
+        default=[],
+        metavar='FILE',
+        type=Path,
+    )
+
+    subparser_create_archive.add_argument(
+        '--dry-run',
+        '-n',
+        help='perform a trial run with no changes made',
+        action='store_true',
+    )
+
+    subparser_create_archive.add_argument(
+        '--verbose', '-v', help='increase verbosity', action='store_true'
+    )
     subparser_create_archive.set_defaults(func=main_create_archive)
     return subparser_create_archive
 
