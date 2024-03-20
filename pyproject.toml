@@ -26,7 +26,7 @@ Jinja2 = "^3.1.2"
 poetry-core = {version = "^1.0.8", extras = ["poetry"]}
 
 [tool.poetry.group.dev.dependencies]
-black = "^22.3.0"
+black = ">=22.3,<25.0"
 logging-utils-tddschn = "^0.1.10"
 
 [build-system]
